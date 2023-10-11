@@ -16,6 +16,7 @@ ROOT_PATH='kaggle_room_street_data/street_data'
 LABEL_DIR='images'
 INPUT_DIR='images_BW'
 
+
 #データフレーム作成
 train_df=pd.DataFrame()
 #カスタムデータセットの作成
@@ -36,23 +37,21 @@ class ImageDataset(torch.utils.data.Dataset):
         bw_list=os.listdir(self.img_bw_dir)
         imgBW_path=os.path.join(self.img_bw_dir,bw_list[idx])
         image=read_image(imgBW_path)
-        plt.imshow(image.permute(1,2,0))
-        img=cv2.imread(bw_list[idx])
-        
-        if self.transform:
+        if self.transform is not None:
             image=self.transform()
 
         label_list=os.listdir(self.img_label_dir)
         label_path=os.path.join(self.img_label_dir,label_list[idx])
         label=read_image(label_path)
         
-        if self.target_transform:
+        if self.target_transform is not None:
             label=self.target_transform()
         sample={"image":image,"label":label}
         return sample
 
 train_data=ImageDataset(
     img_bw_dir=f'{INPUT_DIR}/train/all',
+    
     img_label_dir=f'{LABEL_DIR}/train/all',
     transform=ToTensor,#これにパラメータを[0,1]の間の値にする操作が含まれる
     target_transform=ToTensor
@@ -66,6 +65,14 @@ test_data=ImageDataset(
     target_transform=ToTensor
 
 )
+for i in range(len(train_data)):
+    img = train_data[i]
+    print(type(img))
+    if i==10:
+        break
+    
+
+
 
 BATCH_SIZE=32
 train_dataloader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True)
