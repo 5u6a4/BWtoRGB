@@ -5,6 +5,7 @@ from torchvision.io import read_image
 import torch
 from torch.utils.data import Dataset
 from torchvision import datasets
+
 from torchvision.transforms import ToTensor, Lambda
 from torch.utils.data import DataLoader
 import torch.optim as optim
@@ -37,8 +38,7 @@ class ImageDataset(torch.utils.data.Dataset):
         image=read_image(imgBW_path)
         plt.imshow(image.permute(1,2,0))
         img=cv2.imread(bw_list[idx])
-        if self.idx==1:
-            print(bw_list[idx])
+        
         if self.transform:
             image=self.transform()
 
@@ -163,7 +163,7 @@ for epoch in range(EPOCHS):
     train_loss=0
     val_loss=0
     unet.train()
-    for idx ,data in enumerate(train_dataloader):
+    for idx,sample in enumerate(train_dataloader):
         inputs,labels=data["image"].to(device),data["label"].to(device)
         optimizer.zero_grad()
         outputs=unet(inputs)
